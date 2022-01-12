@@ -1,3 +1,7 @@
+Time Complexity - O(n^4).
+Space Complexity - O(n).
+
+
 vector<string> generateParenthesis(int n) {
         vector<vector<string>> dp(n+1); // cache to store all generated strings
         dp[0] = {""}; 
@@ -14,3 +18,24 @@ vector<string> generateParenthesis(int n) {
         }
         return dp[n];
     }
+
+
+
+
+
+
+
+
+
+Now, given the constraints in the problem, backtracking is good. But what if, n is large. We can't afford exponential solution. The next thought should be dynamic programming, and if there is a overlapping subproblems nature to it.
+
+Suppose dp[i] contains all the valid parentheses possible of length 2*i. Suppose you got dp[2] which is { (()) , ()() }. Now what will be dp[3]? It can be written as -
+
+( + dp[0] + ) + dp[2] = ()(()) and ()()()
+( + dp[1] + ) + dp[1] = (())()
+( + dp[2] + ) + dp[0] = ((())) and (()())
+
+So you see, we have an overlapping subproblems structure. It's good to know here that this structure closely follows Catalan Numbers. (You can find the number of valid parentheses using Catalan Numbers).
+
+dp[i] = "(" + dp[j] + ")" + dp[i-j-1] (Recursive relation. Similar to a binary tree generation).
+
