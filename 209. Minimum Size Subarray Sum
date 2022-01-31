@@ -1,0 +1,40 @@
+int minSubArrayLen(int s, vector<int>& nums)
+{
+    int n = nums.size();
+    if (n == 0)
+        return 0;
+    int ans = INT_MAX;
+    vector<int> sums(n + 1, 0); //size = n+1 for easier calculations
+    //sums[0]=0 : Meaning that it is the sum of first 0 elements
+    //sums[1]=A[0] : Sum of first 1 elements
+    //ans so on...
+    for (int i = 1; i <= n; i++)
+        sums[i] = sums[i - 1] + nums[i - 1];
+    for (int i = 1; i <= n; i++) {
+        int to_find = s + sums[i - 1];
+        auto bound = lower_bound(sums.begin(), sums.end(), to_find);
+        if (bound != sums.end()) {
+            ans = min(ans, static_cast<int>(bound - (sums.begin() + i - 1)));
+        }
+    }
+    return (ans != INT_MAX) ? ans : 0;
+}
+
+
+
+Approach #3 Using Binary search [Accepted]
+Intuition
+
+We could further improve the Approach #2 using the binary search. Notice that we find the subarray with \text{sum} >=\text{s}sum>=s starting with an index ii in O(n)O(n) time. But, we could reduce the time to O(\log(n))O(log(n)) using binary search. Note that in Approach #2, we search for subarray starting with index ii, until we find \text{sum}=\text{sums}[j] - \text{sums}[i] +\text{nums}[i]sum=sums[j]−sums[i]+nums[i] that is greater than \text{s}s. So, instead of iterating linearly to find the sum, we could use binary search to find the index that is not lower than \text{s}-\text{sums[i]}s−sums[i] in the \text{sums}sums, which can be done using \text{lower\_bound}lower_bound function in C++ STL or could be implemented manually.
+
+Algorithm
+
+Create vector sumssums of size n+1n+1 with : \text{sums}[0]=0\text{, }\text{sums}[i]=\text{sums}[i-1]+\text{nums}[i-1]sums[0]=0, sums[i]=sums[i−1]+nums[i−1]
+
+Iterate from i=1i=1 to nn:
+
+Find the value \text{to\_find}to_find in \text{sum}sum required for minimum subarray starting from index ii to have sum greater than ss, that is: \text{to\_find}=\text{s}+\text{sums}[i-1]to_find=s+sums[i−1]
+Find the index in \text{sums}sums such that value at that index is not lower than the \text{to\_find}to_find value, say \text{bound}bound
+If we find the \text{to\_find}to_find in \text{sums}sums, then:
+Size of current subarray is given by: \text{bound} - (\text{sums.begin}()+i-1)bound−(sums.begin()+i−1)
+Compare ansans with the current subarray size and store minimum in ansans
